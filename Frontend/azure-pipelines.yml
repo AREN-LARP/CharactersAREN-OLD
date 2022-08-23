@@ -1,0 +1,109 @@
+# Node.js with React
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+- main
+
+pool:
+  name: 'KimHosting'
+
+jobs:
+- job: Init
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '12.x'
+    displayName: 'Install Node.js'
+
+- job: SonarCloud
+  dependsOn: Init
+  steps:
+  - task: SonarCloudPrepare@1
+    inputs:
+      SonarCloud: 'SonarCharactersAREN-frontend'
+      organization: 'charactersaren'
+      scannerMode: 'CLI'
+      configMode: 'manual'
+      cliProjectKey: 'CharactersAREN_CharactersAREN-frontend'
+      cliProjectName: 'CharactersAREN-frontend'
+      cliSources: '.'
+
+  - task: SonarCloudAnalyze@1
+  - task: SonarCloudPublish@1
+    inputs:
+      pollingTimeoutSec: '300'
+      
+- job: Admin
+  dependsOn: SonarCloud
+  steps:
+  - script: |
+      cd charactersaren-admin 
+      npm install
+    displayName: 'npm install'
+
+  - task: replacetokens@4
+    inputs:
+      targetFiles: '**/*.env'
+      encoding: 'auto'
+      tokenPattern: 'default'
+      writeBOM: true
+      actionOnMissing: 'warn'
+      keepToken: false
+      actionOnNoFiles: 'continue'
+      enableTransforms: false
+      useLegacyPattern: false
+      enableTelemetry: true
+
+  - script: |
+      cd charactersaren-admin 
+      npm run build
+    displayName: 'npm build'
+
+  - task: CopyFiles@2
+    inputs:
+      Contents: 'charactersaren-admin/build/**' # Pull the build directory (React)
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  - task: PublishBuildArtifacts@1
+    inputs: 
+      PathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
+      ArtifactName: 'www-admin' # output artifact named www
+
+- job: Player
+  dependsOn: SonarCloud
+  steps:
+  - task: replacetokens@4
+    inputs:
+      targetFiles: '**/*.env'
+      encoding: 'auto'
+      tokenPattern: 'default'
+      writeBOM: true
+      actionOnMissing: 'warn'
+      keepToken: false
+      actionOnNoFiles: 'continue'
+      enableTransforms: false
+      useLegacyPattern: false
+      enableTelemetry: true
+
+  - script: |
+      cd charactersaren-player 
+      npm install
+    displayName: 'npm install'
+
+  - script: |
+      cd charactersaren-player 
+      npm run build
+    displayName: 'npm build'
+  - task: CopyFiles@2
+    inputs:
+      Contents: 'charactersaren-player/build/**' # Pull the build directory (React)
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  - task: PublishBuildArtifacts@1
+    inputs: 
+      PathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
+      ArtifactName: 'www-player' # output artifact named www
+
+

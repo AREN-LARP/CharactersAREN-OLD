@@ -1,0 +1,111 @@
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth0 } from '@auth0/auth0-react';
+
+function AddCharacter() {
+    let domain = process.env.REACT_APP_BACKEND
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    const [character, setCharacter] = useState({ id: 0, icName: '', userId: 0, skills: [] });
+    const [validated, setValidated] = useState(false);
+    const [users, setUsers] = useState([]);
+    const { getAccessTokenSilently } = useAuth0();
+
+    const navigate = useNavigate();
+    useEffect(async () => {
+        const accessToken = await getAccessTokenSilently({ audience: `https://characters-aren.azurewebsites.net`, scope: "" });
+        let header = { headers: { Authorization: `Bearer ${accessToken}` } }
+        const userResponse = await axios.get(domain + '/api/Users', header);
+        setUsers(userResponse.data);
+    }, [])
+
+    const handleSubmit = async (event) => {
+        console.log(character)
+        const form = event.currentTarget;
+        event.preventDefault();
+
+        if (form.checkValidity() === false) {
+            event.stopPropagation();
+        }
+
+        setValidated(true)
+
+        try {
+            const accessToken = await getAccessTokenSilently({ audience: `https://characters-aren.azurewebsites.net`, scope: "" });
+            let header = { headers: { Authorization: `Bearer ${accessToken}` } }
+            const response = await axios.post(domain + '/api/Characters', character, header);
+            handleClose();
+            navigate("./" + response.data.id)
+        }
+        catch {
+            window.alert("item niet aangemaakt!");
+        }
+    }
+
+    const updateField = e => {
+        setCharacter({
+            ...character,
+            [e.target.name]: e.target.value
+        });
+    };
+    return (
+        <>
+            <Button variant="primary" onClick={handleShow}>
+                Karakter Toevoegen
+            </Button>
+
+            <Modal show={show} onHide={handleClose} size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>Nieuw Karakter</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form id="add-skill-form" noValidate validated={validated} onSubmit={handleSubmit}>
+                        <Form.Group as={Row} className="mb-3" controlId="formName">
+                            <Form.Label column sm="2">
+                                Naam:
+                            </Form.Label>
+                            <Col sm="10">
+                                <Form.Control type="text" placeholder="karakter's naam" name="icName" onChange={updateField} required />
+                                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                            </Col>
+                        </Form.Group>
+                        <Form.Group>
+                            <Row className="mb-3">
+                                <Col sm="7">
+                                    <FloatingLabel controlId="UserSelect" label="Eigenaar">
+                                        <Form.Select aria-label="User" name="userId" onChange={updateField} required>
+                                            <option value="">Kies eigenaar</option>
+                                            {
+                                                users.map(user => (
+                                                    <option key={user.id} value={user.id}>{user.email}</option>
+                                                ))
+                                            }
+                                        </Form.Select>
+                                    </FloatingLabel>
+                                </Col>                               
+                            </Row>
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button form="add-skill-form" variant="primary" type="submit">
+                        Opslaan
+                    </Button>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Sluiten
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
+    );
+}
+
+export default AddCharacter

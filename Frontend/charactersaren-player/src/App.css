@@ -1,0 +1,36 @@
+.App{
+    width: 100vw;
+    height: 100vh;
+}
+
+.AdminSideBar {
+    height: 100%;
+    width: 250px;
+}
+.AdminSideBarList {
+    height: auto;
+    padding: 0;
+    width: 100%;
+}
+.AdminSideBarList .row{
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    margin: 0;
+    height: 60px;
+    justify-content: center;
+    align-items: center;
+}
+.AdminSideBarList .row:hover{
+cursor: pointer;
+background-color: #283F54;
+}
+.row #icon{
+    flex: 30%;
+    display: grid;
+    place-items: center;
+}
+
+.row #title{
+    flex: 70%;
+}
