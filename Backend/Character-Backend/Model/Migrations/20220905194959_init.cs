@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
+#nullable disable
+
 namespace Model.Migrations
 {
     public partial class init : Migration
@@ -22,6 +24,20 @@ namespace Model.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FactionLoots",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Colour = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FactionLoots", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SkillCategory",
                 columns: table => new
                 {
@@ -40,7 +56,8 @@ namespace Model.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OcName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    AuthId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,7 +72,8 @@ namespace Model.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Level = table.Column<int>(type: "int", nullable: false),
-                    SkillCategoryId = table.Column<int>(type: "int", nullable: false)
+                    SkillCategoryId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,6 +107,26 @@ namespace Model.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ItemGroups",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SkillId = table.Column<int>(type: "int", nullable: true),
+                    Speed = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemGroups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemGroups_Skills_SkillId",
+                        column: x => x.SkillId,
+                        principalTable: "Skills",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Characters",
                 columns: table => new
                 {
@@ -97,7 +135,8 @@ namespace Model.Migrations
                     IcName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    CareerId = table.Column<int>(type: "int", nullable: false)
+                    CareerId = table.Column<int>(type: "int", nullable: true),
+                    Backstory = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -113,6 +152,54 @@ namespace Model.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Items",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Weight = table.Column<int>(type: "int", nullable: false),
+                    ItemGroupId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Items", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Items_ItemGroups_ItemGroupId",
+                        column: x => x.ItemGroupId,
+                        principalTable: "ItemGroups",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LootProbabilities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemGroupId = table.Column<int>(type: "int", nullable: true),
+                    Probability = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    MinAmount = table.Column<int>(type: "int", nullable: false),
+                    MaxAmount = table.Column<int>(type: "int", nullable: false),
+                    FactionLootId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LootProbabilities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LootProbabilities_FactionLoots_FactionLootId",
+                        column: x => x.FactionLootId,
+                        principalTable: "FactionLoots",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_LootProbabilities_ItemGroups_ItemGroupId",
+                        column: x => x.ItemGroupId,
+                        principalTable: "ItemGroups",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -189,6 +276,26 @@ namespace Model.Migrations
                 column: "SkillsId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ItemGroups_SkillId",
+                table: "ItemGroups",
+                column: "SkillId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Items_ItemGroupId",
+                table: "Items",
+                column: "ItemGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LootProbabilities_FactionLootId",
+                table: "LootProbabilities",
+                column: "FactionLootId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LootProbabilities_ItemGroupId",
+                table: "LootProbabilities",
+                column: "ItemGroupId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Skills_SkillCategoryId",
                 table: "Skills",
                 column: "SkillCategoryId");
@@ -203,10 +310,22 @@ namespace Model.Migrations
                 name: "CharacterSkill");
 
             migrationBuilder.DropTable(
+                name: "Items");
+
+            migrationBuilder.DropTable(
+                name: "LootProbabilities");
+
+            migrationBuilder.DropTable(
                 name: "Events");
 
             migrationBuilder.DropTable(
                 name: "Characters");
+
+            migrationBuilder.DropTable(
+                name: "FactionLoots");
+
+            migrationBuilder.DropTable(
+                name: "ItemGroups");
 
             migrationBuilder.DropTable(
                 name: "Careers");

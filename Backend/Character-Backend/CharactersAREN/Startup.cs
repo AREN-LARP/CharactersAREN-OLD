@@ -41,6 +41,12 @@ namespace CharactersAREN
             services.AddTransient<IEventLogic, EventLogic>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IUserLogic, UserLogic>();
+            services.AddTransient<IItemRepository, ItemRepository>();
+            services.AddTransient<IItemLogic, ItemLogic>();
+            services.AddTransient<IItemGroupRepository, ItemGroupRepository>();
+            services.AddTransient<IItemGroupLogic, ItemGroupLogic>();
+            services.AddTransient<IFactionLootRepository, FactionLootRepository>();
+            services.AddTransient<IFactionLootLogic, FactionLootLogic>();
             services.AddControllers().AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;

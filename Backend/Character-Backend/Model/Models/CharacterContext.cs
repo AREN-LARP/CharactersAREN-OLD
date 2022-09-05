@@ -19,6 +19,10 @@ namespace Model.Models
         public virtual DbSet<Career> Careers { get; set; }
         public virtual DbSet<Event> Events { get; set; }
         public virtual DbSet<SkillCategory> SkillCategory { get; set; }
+        public virtual DbSet<Item> Items { get; set; }
+        public virtual DbSet<ItemGroup> ItemGroups { get; set; }
+        public virtual DbSet<FactionLoot> FactionLoots { get; set; }
+        public virtual DbSet<LootProbability> LootProbabilities { get; set; }
         public Task<int> SaveChangesAsync() => base.SaveChangesAsync();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -27,6 +31,8 @@ namespace Model.Models
             modelBuilder.Entity<Event>().HasMany(e => e.Characters).WithMany(c => c.Events);
             modelBuilder.Entity<Character>().HasOne(c => c.Career).WithMany().OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Career>().HasOne(c => c.Skill);
+            modelBuilder.Entity<ItemGroup>().HasMany(i => i.Items);
+            modelBuilder.Entity<ItemGroup>().HasOne(i => i.Skill);
         }
     }
 }
