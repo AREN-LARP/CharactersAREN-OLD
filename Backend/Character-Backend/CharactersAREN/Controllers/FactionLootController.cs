@@ -21,14 +21,14 @@ namespace CharactersAREN.Controllers
         }
 
 
-        // GET: api/FactionLoots
+        // GET: api/FactionLoot
         [HttpGet, Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<IEnumerable<FactionLoot>>> GetFactionLoots()
         {
             return Ok(await logic.GetFactionLoots());
         }
 
-        // GET: api/FactionLoots/5
+        // GET: api/FactionLoot/5
         [HttpGet("{id}"), Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<FactionLoot>> GetFactionLoot(int id)
         {
@@ -42,7 +42,7 @@ namespace CharactersAREN.Controllers
             return factionLoot;
         }
 
-        // PUT: api/FactionLoots/5
+        // PUT: api/FactionLoot/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}"), Authorize(Policy = "WriteAccess")]
         public async Task<IActionResult> PutFactionLoot(int id, FactionLoot factionLoot)
@@ -57,7 +57,7 @@ namespace CharactersAREN.Controllers
             return Ok(factionLoot);
         }
 
-        // POST: api/FactionLoots
+        // POST: api/FactionLoot
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost, Authorize(Policy = "WriteAccess")]
         public async Task<ActionResult<FactionLoot>> PostFactionLoot(FactionLoot factionLoot)

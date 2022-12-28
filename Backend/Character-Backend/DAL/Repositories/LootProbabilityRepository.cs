@@ -15,17 +15,25 @@ namespace DAL.Repositories
 
         public async Task<List<LootProbability>> GetLootProbabilities()
         {
-            return await GetAll().ToListAsync();
+            return await GetAll().Include(lp => lp.ItemGroup).Select(lp => new LootProbability
+            {
+                Id = lp.Id,
+                ItemGroup = lp.ItemGroup,
+                Probability = lp.Probability,
+                MinAmount = lp.MinAmount,
+                MaxAmount = lp.MaxAmount
+            }).ToListAsync();
         }
 
         public async Task<LootProbability> GetLootProbabilityById(int id)
         {
-            return await GetAll().FirstOrDefaultAsync(s => s.Id == id);
+            IEnumerable<LootProbability> lootProbabilities = await GetLootProbabilities();
+            return lootProbabilities.FirstOrDefault(lp => lp.Id == id);
         }
 
         public async Task<bool> LootProbabilityExists(int itemGroupId)
         {
-            return await GetAll().AnyAsync(s => s.ItemGroupId == itemGroupId);
+            return await GetAll().AnyAsync(s => s.ItemGroup.Id == itemGroupId);
         }
 
         public override async Task<LootProbability> PutEntity(LootProbability entity)

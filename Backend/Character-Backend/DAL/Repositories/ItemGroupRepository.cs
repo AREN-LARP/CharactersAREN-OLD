@@ -15,12 +15,20 @@ namespace DAL.Repositories
 
         public async Task<List<ItemGroup>> GetItemGroups()
         {
-            return await GetAll().ToListAsync();
+            return await GetAll().Include(ig => ig.Skill).Include(ig => ig.Items).Select(ig => new ItemGroup
+            {
+                Id = ig.Id,
+                Name = ig.Name,
+                Skill = ig.Skill,
+                Speed = ig.Speed,
+                Items = ig.Items.Select(i => new Item { Id = i.Id, Name = i.Name, Description = i.Description, Weight = i.Weight}).ToList()
+            }).ToListAsync();
         }
 
         public async Task<ItemGroup> GetItemGroupById(int id)
         {
-            return await GetAll().FirstOrDefaultAsync(s => s.Id == id);
+            IEnumerable<ItemGroup> itemGroups = await GetItemGroups();
+            return itemGroups.FirstOrDefault(ig => ig.Id == id);
         }
 
         public async Task<bool> ItemGroupExists(string name)

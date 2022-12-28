@@ -28,7 +28,7 @@ namespace Logic.Logic
 
         public async Task<FactionLoot> GetFactionLoot(int id)
         {
-
+            /*
             #region todo remove, cuz this overrides the Get function yo
             Item IA = new Item();
             IA.Id = 1;
@@ -64,7 +64,7 @@ namespace Logic.Logic
             return f;
 
             #endregion
-
+            */
             var FactionLoot = await _repo.GetFactionLootById(id);
 
             return FactionLoot;
@@ -98,16 +98,19 @@ namespace Logic.Logic
             //Updating the LootProbabilities before updating the FactionLoot
             foreach (LootProbability lootProbability in factionLoot.LootProbabilities)
             {
-                var lootExists = await _probabilityRepo.LootProbabilityExists(lootProbability.ItemGroupId);
+                var lootExists = await _probabilityRepo.LootProbabilityExists(lootProbability.ItemGroup.Id);
                 if (lootExists)
                 {
                     await _probabilityRepo.PutEntity(lootProbability);
                 } 
                 else
                 {
-
+                    var itemGroup = lootProbability.ItemGroup;
+                    lootProbability.ItemGroup = null;
                     var newLoot = await _probabilityRepo.AddEntity(lootProbability);
-                    factionLoot.LootProbabilities.First(l => l.ItemGroupId == newLoot.ItemGroupId).Id = newLoot.Id;
+                    newLoot.ItemGroup = itemGroup;
+                    await _probabilityRepo.PutEntity(newLoot);
+                    factionLoot.LootProbabilities.First(l => l.ItemGroup.Id == newLoot.ItemGroup.Id).Id = newLoot.Id;
                 }
             }
 

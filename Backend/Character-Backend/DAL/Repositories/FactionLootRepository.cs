@@ -15,12 +15,20 @@ namespace DAL.Repositories
 
         public async Task<List<FactionLoot>> GetFactionLoots()
         {
-            return await GetAll().ToListAsync();
+            return await GetAll().Include(fl => fl.LootProbabilities).Select(fl => new FactionLoot
+            {
+                Id = fl.Id,
+                Name = fl.Name,
+                Colour = fl.Colour,
+                LootProbabilities = fl.LootProbabilities.Select(lp => new LootProbability { Id = lp.Id, ItemGroup = lp.ItemGroup, Probability = lp.Probability, MinAmount = lp.MinAmount, MaxAmount = lp.MaxAmount}).ToList()
+
+            }).ToListAsync();
         }
 
         public async Task<FactionLoot> GetFactionLootById(int id)
         {
-            return await GetAll().FirstOrDefaultAsync(s => s.Id == id);
+            IEnumerable<FactionLoot> factionLoots = await GetFactionLoots();
+            return factionLoots.FirstOrDefault(s => s.Id == id);
         }
 
         public async Task<bool> FactionLootExists(string name)
