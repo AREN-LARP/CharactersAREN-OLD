@@ -13,10 +13,12 @@ namespace Logic.Logic
     public class FactionLootLogic : IFactionLootLogic
     {
         private readonly IFactionLootRepository _repo;
+        private readonly ILootProbabilityRepository _probabilityRepo;
 
-        public FactionLootLogic(IFactionLootRepository repo)
+        public FactionLootLogic(IFactionLootRepository repo, ILootProbabilityRepository probabilityRepo)
         {
             _repo = repo;
+            _probabilityRepo = probabilityRepo;
         }
 
         public async Task<FactionLoot> DeleteFactionLoot(FactionLoot factionLoot)
@@ -55,13 +57,13 @@ namespace Logic.Logic
             LB.MinAmount = 15;
             LB.MaxAmount = 20;
 
-#endregion
-
             FactionLoot f = new FactionLoot();
             f.LootProbabilities = new List<LootProbability>();
             f.LootProbabilities.Add(LA);
             f.LootProbabilities.Add(LB);
             return f;
+
+            #endregion
 
             var FactionLoot = await _repo.GetFactionLootById(id);
 
@@ -91,6 +93,22 @@ namespace Logic.Logic
             if (factionLoot.Id != id)
             {
                 throw new ArgumentException($"{nameof(PutFactionLoot)}: id in url is not equal to FactionLoot id.");
+            }
+
+            //Updating the LootProbabilities before updating the FactionLoot
+            foreach (LootProbability lootProbability in factionLoot.LootProbabilities)
+            {
+                var lootExists = await _probabilityRepo.LootProbabilityExists(lootProbability.ItemGroupId);
+                if (lootExists)
+                {
+                    await _probabilityRepo.PutEntity(lootProbability);
+                } 
+                else
+                {
+
+                    var newLoot = await _probabilityRepo.AddEntity(lootProbability);
+                    factionLoot.LootProbabilities.First(l => l.ItemGroupId == newLoot.ItemGroupId).Id = newLoot.Id;
+                }
             }
 
             return await _repo.PutEntity(factionLoot);

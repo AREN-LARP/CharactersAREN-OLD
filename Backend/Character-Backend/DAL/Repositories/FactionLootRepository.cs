@@ -27,5 +27,26 @@ namespace DAL.Repositories
         {
             return await GetAll().AnyAsync(s => s.Name == name);
         }
+
+        public override async Task<FactionLoot> PutEntity(FactionLoot entity)
+        {
+            var dbFactionLoot = _context.FactionLoots.Where(f => f.Id == entity.Id).Include(f => f.LootProbabilities).SingleOrDefault();
+
+            if (dbFactionLoot != null)
+            {
+                List<LootProbability> lootProbabilities = new List<LootProbability>();
+                foreach (var loot in entity.LootProbabilities)
+                {
+                    var lootInDB = _context.LootProbabilities.Find(loot.Id);
+                    lootProbabilities.Add(lootInDB);
+                }
+                dbFactionLoot.LootProbabilities = lootProbabilities;
+                dbFactionLoot.Name = entity.Name;
+                dbFactionLoot.Colour = entity.Colour;
+                await _context.SaveChangesAsync();
+                return dbFactionLoot;
+            }
+            throw new ArgumentException($"FactionLoot with id {entity.Id} not found");
+        }
     }
 }

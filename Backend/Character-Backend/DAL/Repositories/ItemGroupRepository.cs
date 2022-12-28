@@ -27,5 +27,27 @@ namespace DAL.Repositories
         {
             return await GetAll().AnyAsync(s => s.Name == name);
         }
+
+        public override async Task<ItemGroup> PutEntity(ItemGroup entity)
+        {
+            var dbItemGroup = _context.ItemGroups.Where(i => i.Id == entity.Id).Include(i => i.Items).SingleOrDefault();
+
+            if (dbItemGroup != null)
+            {
+                List<Item> items = new List<Item>();
+                foreach (var item in entity.Items)
+                {
+                    var itemInDB = _context.Items.Find(item.Id);
+                    items.Add(itemInDB);
+                }
+                dbItemGroup.Items = items;
+                dbItemGroup.Name = entity.Name;
+                dbItemGroup.Skill = entity.Skill;
+                dbItemGroup.Speed = entity.Speed;
+                await _context.SaveChangesAsync();
+                return dbItemGroup;
+            }
+            throw new ArgumentException($"ItemGroup with id {entity.Id} not found");
+        }
     }
 }

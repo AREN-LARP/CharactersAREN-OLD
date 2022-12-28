@@ -11,8 +11,9 @@ namespace Model.Models
         
 
         [ForeignKey("ItemGroupId")]
+        [Required]
         public virtual ItemGroup ItemGroup { get; set; }
-        public int? ItemGroupId { get; set; }
+        public int ItemGroupId { get; set; }
 
         public double Probability { get; set; }
 

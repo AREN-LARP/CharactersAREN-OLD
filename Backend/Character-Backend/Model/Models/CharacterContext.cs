@@ -33,6 +33,8 @@ namespace Model.Models
             modelBuilder.Entity<Career>().HasOne(c => c.Skill);
             modelBuilder.Entity<ItemGroup>().HasMany(i => i.Items);
             modelBuilder.Entity<ItemGroup>().HasOne(i => i.Skill);
+            modelBuilder.Entity<LootProbability>().HasOne(i => i.ItemGroup);
+            modelBuilder.Entity<FactionLoot>().HasMany(i => i.LootProbabilities);
         }
     }
 }

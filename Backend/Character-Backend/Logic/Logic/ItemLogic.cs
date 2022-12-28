@@ -19,9 +19,9 @@ namespace Logic.Logic
             _repo = repo;
         }
 
-        public async Task<Item> DeleteItem(Item skill)
+        public async Task<Item> DeleteItem(Item item)
         {
-            return await _repo.DeleteEntity(skill);
+            return await _repo.DeleteEntity(item);
         }
 
         public async Task<Item> GetItem(int id)
@@ -36,27 +36,27 @@ namespace Logic.Logic
             return await _repo.GetItems();
         }
 
-        public async Task<Item> PostItem(Item skill)
+        public async Task<Item> PostItem(Item item)
         {
-            var exExist = await _repo.ItemExists(skill.Name);
+            var exExist = await _repo.ItemExists(item.Name);
             if (exExist)
             {
-                throw new ObjectAlreadyExistsException(skill.GetType().Name, skill.Name);
+                throw new ObjectAlreadyExistsException(item.GetType().Name, item.Name);
             }
             else
             {
-                return await _repo.AddEntity(skill);
+                return await _repo.AddEntity(item);
             }
         }
 
-        public async Task<Item> PutItem(int id, Item skill)
+        public async Task<Item> PutItem(int id, Item item)
         {
-            if (skill.Id != id)
+            if (item.Id != id)
             {
                 throw new ArgumentException($"{nameof(PutItem)}: id in url is not equal to item id.");
             }
 
-            return await _repo.PutEntity(skill);
+            return await _repo.PutEntity(item);
         }
     }
 }
