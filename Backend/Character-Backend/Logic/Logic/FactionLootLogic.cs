@@ -14,11 +14,13 @@ namespace Logic.Logic
     {
         private readonly IFactionLootRepository _repo;
         private readonly ILootProbabilityRepository _probabilityRepo;
+        private readonly IItemGroupRepository _irRepo;
 
-        public FactionLootLogic(IFactionLootRepository repo, ILootProbabilityRepository probabilityRepo)
+        public FactionLootLogic(IFactionLootRepository repo, ILootProbabilityRepository probabilityRepo, IItemGroupRepository irRepo)
         {
             _repo = repo;
             _probabilityRepo = probabilityRepo;
+            _irRepo = irRepo;
         }
 
         public async Task<FactionLoot> DeleteFactionLoot(FactionLoot factionLoot)
@@ -28,8 +30,9 @@ namespace Logic.Logic
 
         public async Task<FactionLoot> GetFactionLoot(int id)
         {
-            /*
+            
             #region todo remove, cuz this overrides the Get function yo
+            /*
             Item IA = new Item();
             IA.Id = 1;
             IA.Name = "A";
@@ -62,10 +65,19 @@ namespace Logic.Logic
             f.LootProbabilities.Add(LA);
             f.LootProbabilities.Add(LB);
             return f;
-
-            #endregion
             */
+            #endregion
+            
             var FactionLoot = await _repo.GetFactionLootById(id);
+
+            if (FactionLoot != null)
+            {
+                foreach (LootProbability loot in FactionLoot.LootProbabilities)
+                {
+                    var itemGroup = await _irRepo.GetItemGroupById(loot.ItemGroup.Id);
+                    FactionLoot.LootProbabilities.First(lp => lp.Id == loot.Id).ItemGroup = itemGroup;
+                }
+            }
 
             return FactionLoot;
         }
@@ -125,7 +137,7 @@ namespace Logic.Logic
 
             foreach (LootProbability lootProbability in factionLoot.LootProbabilities)
             {
-                if (r.NextDouble().CompareTo(lootProbability.Probability) <= 0)
+                if (r.NextDouble().CompareTo((double)lootProbability.Probability) <= 0)
                 {
                     int count = r.Next(lootProbability.MinAmount, lootProbability.MaxAmount + 1);
                     for (int i = 0; i<count; i++)
