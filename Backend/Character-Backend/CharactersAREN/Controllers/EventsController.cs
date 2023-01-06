@@ -21,14 +21,14 @@ namespace CharactersAREN.Controllers
 
 
         // GET: api/Events
-        [HttpGet, Authorize]
+        [HttpGet]//, Authorize]
         public async Task<ActionResult<IEnumerable<Event>>> GetEvents()
         {
             return Ok(await logic.GetEvents());
         }
 
         // GET: api/Events/5
-        [HttpGet("{id}"), Authorize]
+        [HttpGet("{id}")]//, Authorize]
         public async Task<ActionResult<Event>> GetEvent(int id)
         {
             var eve = await logic.GetEvent(id);
@@ -43,7 +43,7 @@ namespace CharactersAREN.Controllers
 
         // PUT: api/Events/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}"), Authorize]
+        [HttpPut("{id}")]//, Authorize]
         public async Task<IActionResult> PutSkill(int id, Event eve)
         {
             if (id != eve.Id)
@@ -58,7 +58,7 @@ namespace CharactersAREN.Controllers
 
         // POST: api/Events
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost, Authorize]
+        [HttpPost]//, Authorize]
         public async Task<ActionResult<Event>> PostEvent(Event eve)
         {
             try
@@ -74,7 +74,7 @@ namespace CharactersAREN.Controllers
         }
 
         // DELETE: api/Events/5
-        [HttpDelete("{id}"), Authorize]
+        [HttpDelete("{id}")]//, Authorize]
         public async Task<ActionResult<Event>> DeleteEvent(int id)
         {
             var eve = await logic.GetEvent(id);

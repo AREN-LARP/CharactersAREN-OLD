@@ -11,11 +11,11 @@ namespace Logic.LogicInterfaces
     {
         Task<IEnumerable<ItemGroup>> GetItemGroups();     
         Task<ItemGroup> GetItemGroup(int id);
+        Task<ItemGroup> GetItemGroupBySkill(Skill skill);
         Task<ItemGroup> PutItemGroup(int id, ItemGroup ItemGroup);
         Task<ItemGroup> PostItemGroup(ItemGroup ItemGroup);
         Task<ItemGroup> DeleteItemGroup(ItemGroup ItemGroup);
-
-        ICollection<Item> GenerateItems(ItemGroup ItemGroup, int timeSpent, ICollection<object> buffs);
+        ICollection<Tuple<Item, int>> GenerateItems(ItemGroup ItemGroup, int timeSpent, ICollection<Skill> buffs);
 
     }
 }

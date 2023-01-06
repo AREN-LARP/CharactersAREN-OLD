@@ -22,13 +22,13 @@ namespace CharactersAREN.Controllers
 
 
         // GET: api/Users
-        [HttpGet, Authorize]
+        [HttpGet]//, Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return Ok(await logic.GetUsers());
         }
 
-        [HttpGet, Authorize]
+        [HttpGet]//, Authorize]
         [Route("/api/[controller]/CurrentUser/{authId}")]
         public async Task<ActionResult<User>> GetCurrentUser(string authId)
         {            
@@ -42,7 +42,7 @@ namespace CharactersAREN.Controllers
             return user;
         }
         // GET: api/Users/5
-        [HttpGet("{id}"), Authorize]
+        [HttpGet("{id}")]//, Authorize]
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await logic.GetUser(id);
@@ -57,7 +57,7 @@ namespace CharactersAREN.Controllers
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}"), Authorize]
+        [HttpPut("{id}")]//, Authorize]
         public async Task<IActionResult> PutUser(int id, User user)
         {
             if (id != user.Id)
@@ -88,7 +88,7 @@ namespace CharactersAREN.Controllers
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("{id}"), Authorize]
+        [HttpDelete("{id}")]//, Authorize]
         public async Task<ActionResult<User>> DeleteUser(int id)
         {
             var user = await logic.GetUser(id);

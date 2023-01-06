@@ -11,6 +11,7 @@ namespace DAL.DALInterfaces
     {
         Task<List<ItemGroup>> GetItemGroups();
         Task<ItemGroup> GetItemGroupById(int id);
+        Task<IEnumerable<ItemGroup>> GetItemGroupsBySkillId(int id);
         Task<bool> ItemGroupExists(string name);
     }
 }

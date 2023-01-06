@@ -25,14 +25,14 @@ namespace CharactersAREN.Controllers
 
 
         // GET: api/SkillCategories
-        [HttpGet, Authorize]
+        [HttpGet]//, Authorize]
         public async Task<ActionResult<IEnumerable<SkillCategory>>> GetSkillCategories()
         {
             return Ok(await logic.GetSkillCategories());
         }
 
         // GET: api/SkillCategories/5
-        [HttpGet("{id}"), Authorize]
+        [HttpGet("{id}")]//, Authorize]
         public async Task<ActionResult<SkillCategory>> GetSkillCategory(int id)
         {
             var skillCategory = await logic.GetSkillCategory(id);
@@ -47,7 +47,7 @@ namespace CharactersAREN.Controllers
 
         // PUT: api/SkillCategories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}"), Authorize]
+        [HttpPut("{id}")]//, Authorize]
         public async Task<IActionResult> PutSkillCategory(int id, SkillCategory skillCategory)
         {
             if (id != skillCategory.Id)
@@ -62,7 +62,7 @@ namespace CharactersAREN.Controllers
 
         // POST: api/SkillCategories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost, Authorize]
+        [HttpPost]//, Authorize]
         public async Task<ActionResult<SkillCategory>> PostSkill(SkillCategory skillCategory)
         {
             try
@@ -78,7 +78,7 @@ namespace CharactersAREN.Controllers
         }
 
         // DELETE: api/SkillCategories/5
-        [HttpDelete("{id}"), Authorize]
+        [HttpDelete("{id}")]//, Authorize]
         public async Task<ActionResult<SkillCategory>> DeleteSkillCategory(int id)
         {
             var skillCategory = await logic.GetSkillCategory(id);

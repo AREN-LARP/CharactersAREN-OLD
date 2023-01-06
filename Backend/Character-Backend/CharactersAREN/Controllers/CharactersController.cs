@@ -20,20 +20,20 @@ namespace CharactersAREN.Controllers
         }
 
         // GET: api/Characters
-        [HttpGet, Authorize(Policy = "ReadAccess")]
+        [HttpGet]//, Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<IEnumerable<Character>>> GetCharacters()
         {
             return Ok(await logic.GetCharacters());
         }
 
-        [HttpGet, Authorize(Policy = "ReadAccess")]
+        [HttpGet]//, Authorize(Policy = "ReadAccess")]
         [Route("/api/[controller]/UserCharacters/{userId}")]
         public async Task<ActionResult<IEnumerable<Character>>> GetUserCharacters(int userId)
         {
             return Ok( await logic.GetUserCharacters(userId));
         }
 
-        [HttpGet, Authorize(Policy = "ReadAccess")]
+        [HttpGet]//, Authorize(Policy = "ReadAccess")]
         [Route("/api/[controller]/Skills/{id}")]
         public async Task<ActionResult<IEnumerable<Skill>>> GetCharacterSkills(int id)
         {
@@ -41,7 +41,7 @@ namespace CharactersAREN.Controllers
         }
 
         // GET: api/Characters/5
-        [HttpGet("{id}"), Authorize(Policy = "ReadAccess")]
+        [HttpGet("{id}")]//, Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<Character>> GetCharacter(int id)
         {
             var character = await logic.GetCharacter(id);
@@ -56,7 +56,7 @@ namespace CharactersAREN.Controllers
 
         // PUT: api/Characters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}"), Authorize(Policy = "WriteAccess")]
+        [HttpPut("{id}")]//, Authorize(Policy = "WriteAccess")]
         public async Task<IActionResult> PutCharacter(int id, Character character)
         {
             bool isAdmin = User.HasClaim("permissions", "administrator");
@@ -72,7 +72,7 @@ namespace CharactersAREN.Controllers
 
         // POST: api/Characters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost, Authorize(Policy = "WriteAccess")]
+        [HttpPost]//, Authorize(Policy = "WriteAccess")]
         public async Task<ActionResult<Character>> PostCharacter(Character character)
         {
             try
@@ -88,7 +88,7 @@ namespace CharactersAREN.Controllers
         }
 
         // DELETE: api/Characters/5
-        [HttpDelete("{id}"), Authorize(Policy = "DeleteAccess")]
+        [HttpDelete("{id}")]//, Authorize(Policy = "DeleteAccess")]
         public async Task<ActionResult<Character>> DeleteCharacter(int id)
         {
             var character = await logic.GetCharacter(id);

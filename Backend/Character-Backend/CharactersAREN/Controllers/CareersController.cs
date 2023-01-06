@@ -21,14 +21,14 @@ namespace CharactersAREN.Controllers
 
 
         // GET: api/Careers
-        [HttpGet, Authorize]
+        [HttpGet]//, Authorize]
         public async Task<ActionResult<IEnumerable<Career>>> GetCareers()
         {
             return Ok(await logic.GetCareers());
         }
 
         // GET: api/Careers/5
-        [HttpGet("{id}"), Authorize]
+        [HttpGet("{id}")]//, Authorize]
         public async Task<ActionResult<Career>> GetCareer(int id)
         {
             var career = await logic.GetCareer(id);
@@ -43,7 +43,7 @@ namespace CharactersAREN.Controllers
 
         // PUT: api/Careers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}"), Authorize]
+        [HttpPut("{id}")]//, Authorize]
         public async Task<IActionResult> PutCareer(int id, Career career)
         {
             if (id != career.Id)
@@ -58,7 +58,7 @@ namespace CharactersAREN.Controllers
 
         // POST: api/Careers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost, Authorize]
+        [HttpPost]//, Authorize]
         public async Task<ActionResult<Skill>> PostCareer(Career career)
         {
             try
@@ -74,7 +74,7 @@ namespace CharactersAREN.Controllers
         }
 
         // DELETE: api/Careers/5
-        [HttpDelete("{id}"), Authorize]
+        [HttpDelete("{id}")]//, Authorize]
         public async Task<ActionResult<Career>> DeleteCareer(int id)
         {
             var career = await logic.GetCareer(id);

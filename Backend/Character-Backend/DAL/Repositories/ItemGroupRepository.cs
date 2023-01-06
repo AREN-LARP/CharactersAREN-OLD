@@ -31,6 +31,12 @@ namespace DAL.Repositories
             return itemGroups.FirstOrDefault(ig => ig.Id == id);
         }
 
+        public async Task<IEnumerable<ItemGroup>> GetItemGroupsBySkillId(int id)
+        {
+            IEnumerable<ItemGroup> itemGroups = await GetItemGroups();
+            return itemGroups.Where(ig => ig.Skill.Id == id);
+        }
+
         public async Task<bool> ItemGroupExists(string name)
         {
             return await GetAll().AnyAsync(s => s.Name == name);

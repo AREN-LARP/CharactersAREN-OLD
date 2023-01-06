@@ -30,6 +30,11 @@ namespace Logic.Logic
 
             return ItemGroup;
         }
+        public async Task<ItemGroup> GetItemGroupBySkill(Skill skill)
+        {
+            var itemGroups = await _repo.GetItemGroupsBySkillId(skill.Id);
+            return itemGroups.First();
+        }
 
         public async Task<IEnumerable<ItemGroup>> GetItemGroups()
         {
@@ -59,18 +64,23 @@ namespace Logic.Logic
             return await _repo.PutEntity(itemGroup);
         }
 
-        public ICollection<Item> GenerateItems(ItemGroup itemGroup, int timeSpent, ICollection<object> buffs)
+        public ICollection<Tuple<Item, int>> GenerateItems(ItemGroup itemGroup, int timeSpent, ICollection<Skill> buffs)
         {
-            int actualSpeed = itemGroup.Speed - buffs.Count() * 5;
+            int actualSpeed = itemGroup.Speed - buffs.Count * 5;
             actualSpeed = actualSpeed > 5 ? actualSpeed : 5;
 
             int resourceAmount = timeSpent / actualSpeed;
 
-            ICollection<Item> generatedItems = new List<Item>();
+            ICollection<Tuple<Item, int>> generatedItems = new List<Tuple<Item, int>>();
             for (int i = 0; i < resourceAmount; i++)
             {
-                generatedItems.Add(itemGroup.GenerateItem());
+                Item it = itemGroup.GenerateItem();
+                Tuple<Item, int> tuple = generatedItems.FirstOrDefault(t => t.Item1 == it, new Tuple<Item, int>(it, 0));
+                generatedItems.Remove(tuple);
+                tuple = new Tuple<Item, int>(tuple.Item1, tuple.Item2 + 1);
+                generatedItems.Add(tuple);
             }
+
             return generatedItems;
         }
     }

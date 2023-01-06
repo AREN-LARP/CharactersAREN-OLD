@@ -3,6 +3,7 @@ using Logic.LogicInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -21,14 +22,14 @@ namespace CharactersAREN.Controllers
 
 
         // GET: api/ItemGroups
-        [HttpGet, Authorize(Policy = "ReadAccess")]
+        [HttpGet]//, Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<IEnumerable<ItemGroup>>> GetItemGroups()
         {
             return Ok(await logic.GetItemGroups());
         }
 
         // GET: api/ItemGroups/5
-        [HttpGet("{id}"), Authorize(Policy = "ReadAccess")]
+        [HttpGet("{id}")]//, Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<ItemGroup>> GetItemGroup(int id)
         {
             var itemGroup = await logic.GetItemGroup(id);
@@ -43,7 +44,7 @@ namespace CharactersAREN.Controllers
 
         // PUT: api/ItemGroups/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}"), Authorize(Policy = "WriteAccess")]
+        [HttpPut("{id}")]//, Authorize(Policy = "WriteAccess")]
         public async Task<IActionResult> PutItemGroup(int id, ItemGroup itemGroup)
         {
             if (id != itemGroup.Id)
@@ -58,7 +59,7 @@ namespace CharactersAREN.Controllers
 
         // POST: api/ItemGroups
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost, Authorize(Policy = "WriteAccess")]
+        [HttpPost]//, Authorize(Policy = "WriteAccess")]
         public async Task<ActionResult<ItemGroup>> PostItemGroup(ItemGroup itemGroup)
         {
             try
@@ -76,18 +77,33 @@ namespace CharactersAREN.Controllers
         // POST: api/ItemGroups/{id}/generateItems
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("{id}/generateItems")]
-        public async Task<ActionResult<ICollection<Item>>> GenerateItemsFromGroup(int id, int timeSpent)
+        public async Task<ActionResult<ICollection<Tuple<Item, int>>>> GenerateItemsFromGroup(int id, int timeSpent, ICollection<Skill> buffs)
         {
             var itemGroup = await logic.GetItemGroup(id);
             if (itemGroup == null)
             {
                 return NotFound();
             }
-            return Ok(logic.GenerateItems(itemGroup, timeSpent, new List<object>()));
+            return Ok(logic.GenerateItems(itemGroup, timeSpent, buffs));
+        }
+
+        // POST: api/ItemGroups/compositeGenerateItems
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("compositeGenerateItems")]
+        public async Task<ActionResult<ICollection<ICollection<Tuple<Item, int>>>>> CompositeGenerateItems(ICollection<CompositeGenerate> gatherers)
+        {
+            List<ICollection<Tuple<Item, int>>> generatedItems = new List<ICollection<Tuple<Item, int>>>();
+            foreach (CompositeGenerate composite in gatherers)
+            {
+                ItemGroup itemGroup = await logic.GetItemGroupBySkill(composite.Skill);
+                generatedItems.Add(logic.GenerateItems(itemGroup, composite.TimeSpent, composite.Buffs));
+            }
+
+            return Ok(generatedItems);
         }
 
         // DELETE: api/ItemGroups/5
-        [HttpDelete("{id}"), Authorize(Policy = "DeleteAccess")]
+        [HttpDelete("{id}")]//, Authorize(Policy = "DeleteAccess")]
         public async Task<ActionResult<ItemGroup>> DeleteItemGroup(int id)
         {
             var itemGroup = await logic.GetItemGroup(id);

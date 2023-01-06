@@ -25,14 +25,14 @@ namespace CharactersAREN.Controllers
 
 
         // GET: api/Items
-        [HttpGet, Authorize(Policy = "ReadAccess")]
+        [HttpGet]//, Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<IEnumerable<Item>>> GetItems()
         {
             return Ok(await logic.GetItems());
         }
 
         // GET: api/Items/5
-        [HttpGet("{id}"), Authorize(Policy = "ReadAccess")]
+        [HttpGet("{id}")]//, Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<Item>> GetItem(int id)
         {
             var skill = await logic.GetItem(id);
@@ -47,7 +47,7 @@ namespace CharactersAREN.Controllers
 
         // PUT: api/Items/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}"), Authorize(Policy = "WriteAccess")]
+        [HttpPut("{id}")]//, Authorize(Policy = "WriteAccess")]
         public async Task<IActionResult> PutItem(int id, Item skill)
         {
             if (id != skill.Id)
@@ -62,7 +62,7 @@ namespace CharactersAREN.Controllers
 
         // POST: api/Items
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost, Authorize(Policy = "WriteAccess")]
+        [HttpPost]//, Authorize(Policy = "WriteAccess")]
         public async Task<ActionResult<Item>> PostItem(Item skill)
         {
             try
@@ -78,7 +78,7 @@ namespace CharactersAREN.Controllers
         }
 
         // DELETE: api/Items/5
-        [HttpDelete("{id}"), Authorize(Policy = "DeleteAccess")]
+        [HttpDelete("{id}")]//, Authorize(Policy = "DeleteAccess")]
         public async Task<ActionResult<Item>> DeleteItem(int id)
         {
             var skill = await logic.GetItem(id);

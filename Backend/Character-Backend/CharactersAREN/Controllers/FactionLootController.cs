@@ -22,14 +22,14 @@ namespace CharactersAREN.Controllers
 
 
         // GET: api/FactionLoot
-        [HttpGet, Authorize(Policy = "ReadAccess")]
+        [HttpGet]//, Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<IEnumerable<FactionLoot>>> GetFactionLoots()
         {
             return Ok(await logic.GetFactionLoots());
         }
 
         // GET: api/FactionLoot/5
-        [HttpGet("{id}"), Authorize(Policy = "ReadAccess")]
+        [HttpGet("{id}")]//, Authorize(Policy = "ReadAccess")]
         public async Task<ActionResult<FactionLoot>> GetFactionLoot(int id)
         {
             var factionLoot = await logic.GetFactionLoot(id);
@@ -44,7 +44,7 @@ namespace CharactersAREN.Controllers
 
         // PUT: api/FactionLoot/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}"), Authorize(Policy = "WriteAccess")]
+        [HttpPut("{id}")]//, Authorize(Policy = "WriteAccess")]
         public async Task<IActionResult> PutFactionLoot(int id, FactionLoot factionLoot)
         {
             if (id != factionLoot.Id)
@@ -59,7 +59,7 @@ namespace CharactersAREN.Controllers
 
         // POST: api/FactionLoot
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost, Authorize(Policy = "WriteAccess")]
+        [HttpPost]//, Authorize(Policy = "WriteAccess")]
         public async Task<ActionResult<FactionLoot>> PostFactionLoot(FactionLoot factionLoot)
         {
             try
@@ -88,7 +88,7 @@ namespace CharactersAREN.Controllers
         }
 
         // DELETE: api/FactionLoot/5
-        [HttpDelete("{id}"), Authorize(Policy = "DeleteAccess")]
+        [HttpDelete("{id}")]//, Authorize(Policy = "DeleteAccess")]
         public async Task<ActionResult<FactionLoot>> DeleteFactionLoot(int id)
         {
             var factionLoot = await logic.GetFactionLoot(id);
